@@ -1,6 +1,5 @@
 from pathlib import Path
-
-
+from historical_growth_engine import historical_growth_summary
 OUTPUT_FOLDER = Path("outputs")
 
 
@@ -16,6 +15,8 @@ def write_report(stock, valuation):
     OUTPUT_FOLDER.mkdir(exist_ok=True)
 
     filename = OUTPUT_FOLDER / f"{stock.ticker}_report.txt"
+    historical_growth = historical_growth_summary(stock.ticker)
+
 
     with open(filename, "w", encoding="utf-8") as f:
 
@@ -59,12 +60,9 @@ def write_report(stock, valuation):
             f.write("Unavailable\n")
 
         f.write("\n")
-
-        f.write("VALUATION\n")
+        f.write("HISTORICAL GROWTH\n")
         f.write("------------------------------\n")
-
-        f.write(f"Growth Used : {valuation.total_growth_used}%\n")
-        f.write(f"Fair Value  : {valuation.fair_value}\n")
-        f.write(f"Buy Price   : {valuation.buy_price}\n")
-        f.write(f"Qualifies   : {valuation.qualifies}\n")
-        f.write(f"Reason      : {valuation.reason}\n")
+        f.write(f"Revenue CAGR: {pct(historical_growth.get('revenue_cagr'))}\n")
+        f.write(f"EPS CAGR    : {pct(historical_growth.get('eps_cagr'))}\n")
+        f.write(f"FCF CAGR    : {pct(historical_growth.get('fcf_cagr'))}\n")
+        f.write(f"Suggested Historical Growth: {pct(historical_growth.get('suggested_historical_growth'))}\n\n")
